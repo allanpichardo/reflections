@@ -1,5 +1,13 @@
 import '../css/index.css';
 import p5 from "p5";
+import Scene from "./Scene";
 
-console.log("Hello, World!");
-console.log(p5);
+function main(): void {
+    new p5((p5: p5) => {
+        const scene = new Scene(p5, 750, 750);
+        p5.setup = scene.setup.bind(scene);
+        p5.draw = scene.draw.bind(scene);
+    });
+}
+
+main();
