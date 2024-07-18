@@ -16,7 +16,7 @@
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/noSourceMaps.js */ \"./node_modules/css-loader/dist/runtime/noSourceMaps.js\");\n/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ \"./node_modules/css-loader/dist/runtime/api.js\");\n/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);\n// Imports\n\n\nvar ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));\n// Module\n___CSS_LOADER_EXPORT___.push([module.id, `h1 {\n  color: green;\n}`, \"\"]);\n// Exports\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);\n\n\n//# sourceURL=webpack://Reflections_Exercise/./src/css/index.css?./node_modules/css-loader/dist/cjs.js");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/noSourceMaps.js */ \"./node_modules/css-loader/dist/runtime/noSourceMaps.js\");\n/* harmony import */ var _node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ \"./node_modules/css-loader/dist/runtime/api.js\");\n/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);\n// Imports\n\n\nvar ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_noSourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));\n// Module\n___CSS_LOADER_EXPORT___.push([module.id, `body {\n  background-color: #eeeeee;\n  font-family: 'Roboto', sans-serif;\n  margin: 0;\n  padding: 0;\n\n  canvas {\n    background-color: white;\n  }\n}`, \"\"]);\n// Exports\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);\n\n\n//# sourceURL=webpack://Reflections_Exercise/./src/css/index.css?./node_modules/css-loader/dist/cjs.js");
 
 /***/ }),
 
@@ -129,6 +129,39 @@ eval("\n\n/* istanbul ignore next  */\nfunction styleTagTransform(css, styleElem
 
 /***/ }),
 
+/***/ "./src/js/BoundingBox.ts":
+/*!*******************************!*\
+  !*** ./src/js/BoundingBox.ts ***!
+  \*******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ BoundingBox)\n/* harmony export */ });\nclass BoundingBox {\n    constructor(x, y, width, height) {\n        this.position = { x, y };\n        this.width = width;\n        this.height = height;\n    }\n    get center() {\n        return {\n            x: this.position.x + this.width / 2,\n            y: this.position.y + this.height / 2\n        };\n    }\n    intersects(other) {\n        return this.position.x < other.position.x + other.width &&\n            this.position.x + this.width > other.position.x &&\n            this.position.y < other.position.y + other.height &&\n            this.position.y + this.height > other.position.y;\n    }\n    contains(point) {\n        return point.x >= this.position.x &&\n            point.x <= this.position.x + this.width &&\n            point.y >= this.position.y &&\n            point.y <= this.position.y + this.height;\n    }\n}\n\n\n//# sourceURL=webpack://Reflections_Exercise/./src/js/BoundingBox.ts?");
+
+/***/ }),
+
+/***/ "./src/js/Room.ts":
+/*!************************!*\
+  !*** ./src/js/Room.ts ***!
+  \************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ Room)\n/* harmony export */ });\n/* harmony import */ var _BoundingBox__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BoundingBox */ \"./src/js/BoundingBox.ts\");\n\nclass Room {\n    static get SIZE() {\n        return 100;\n    }\n    constructor(p5, x, y, isVirtual = false) {\n        this.p5 = p5;\n        this.boundingBox = new _BoundingBox__WEBPACK_IMPORTED_MODULE_0__[\"default\"](x - Room.SIZE / 2, y - Room.SIZE / 2, Room.SIZE, Room.SIZE);\n        this.isVirtual = isVirtual;\n    }\n    setup() {\n    }\n    draw() {\n        this.p5.push();\n        this.p5.stroke(this.isVirtual ? 200 : 0, this.isVirtual ? 127 : 255);\n        this.p5.strokeWeight(1);\n        this.p5.fill(this.isVirtual ? 250 : 255, this.isVirtual ? 127 : 255);\n        this.p5.rect(this.boundingBox.position.x, this.boundingBox.position.y, this.boundingBox.width, this.boundingBox.height);\n        this.p5.pop();\n    }\n}\n\n\n//# sourceURL=webpack://Reflections_Exercise/./src/js/Room.ts?");
+
+/***/ }),
+
+/***/ "./src/js/Scene.ts":
+/*!*************************!*\
+  !*** ./src/js/Scene.ts ***!
+  \*************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ Scene)\n/* harmony export */ });\n/* harmony import */ var _Room__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Room */ \"./src/js/Room.ts\");\n/* harmony import */ var _BoundingBox__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BoundingBox */ \"./src/js/BoundingBox.ts\");\n\n\n/**\n * This is where the main sketch is built. This class is a controller\n * that manages the scene objects and the canvas.\n *\n * The scene is a 9 x 9 grid of rooms. The center room is the main room\n * and all other rooms are reserved canvas space for possible virtual\n * rooms.\n */\nclass Scene {\n    constructor(p5, width, height) {\n        this.scale = 6;\n        this.p5 = p5;\n        this.boundingBox = new _BoundingBox__WEBPACK_IMPORTED_MODULE_1__[\"default\"](0, 0, width, height);\n        this.sceneObjects = new Map();\n        this.buildScene();\n    }\n    buildScene() {\n        for (let i = 0; i < 9; i++) {\n            for (let j = 0; j < 9; j++) {\n                const isVirtual = !(i === 4 && j === 4);\n                const room = new _Room__WEBPACK_IMPORTED_MODULE_0__[\"default\"](this.p5, (i * _Room__WEBPACK_IMPORTED_MODULE_0__[\"default\"].SIZE + _Room__WEBPACK_IMPORTED_MODULE_0__[\"default\"].SIZE / 2), (j * _Room__WEBPACK_IMPORTED_MODULE_0__[\"default\"].SIZE + _Room__WEBPACK_IMPORTED_MODULE_0__[\"default\"].SIZE / 2), isVirtual);\n                this.sceneObjects.set(`${i},${j}`, room);\n            }\n        }\n    }\n    calculateScale() {\n        this.p5.translate(this.boundingBox.center.x, this.boundingBox.center.y);\n        this.p5.scale(this.scale);\n        this.p5.translate(-this.boundingBox.center.x, -this.boundingBox.center.y);\n    }\n    setup() {\n        this.p5.createCanvas(this.boundingBox.width, this.boundingBox.height);\n        this.sceneObjects.forEach(sceneObject => sceneObject.setup());\n    }\n    draw() {\n        this.scale = Math.abs(Math.sin(this.p5.frameCount * 0.01) * 6);\n        this.calculateScale();\n        this.sceneObjects.forEach(sceneObject => sceneObject.draw());\n    }\n}\n\n\n//# sourceURL=webpack://Reflections_Exercise/./src/js/Scene.ts?");
+
+/***/ }),
+
 /***/ "./src/js/index.ts":
 /*!*************************!*\
   !*** ./src/js/index.ts ***!
@@ -136,7 +169,7 @@ eval("\n\n/* istanbul ignore next  */\nfunction styleTagTransform(css, styleElem
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _css_index_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../css/index.css */ \"./src/css/index.css\");\n/* harmony import */ var p5__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! p5 */ \"./node_modules/p5/lib/p5.min.js\");\n/* harmony import */ var p5__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(p5__WEBPACK_IMPORTED_MODULE_1__);\n\n\nconsole.log(\"Hello, World!\");\nconsole.log((p5__WEBPACK_IMPORTED_MODULE_1___default()));\n\n\n//# sourceURL=webpack://Reflections_Exercise/./src/js/index.ts?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _css_index_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../css/index.css */ \"./src/css/index.css\");\n/* harmony import */ var p5__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! p5 */ \"./node_modules/p5/lib/p5.min.js\");\n/* harmony import */ var p5__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(p5__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _Scene__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Scene */ \"./src/js/Scene.ts\");\n\n\n\nfunction main() {\n    new (p5__WEBPACK_IMPORTED_MODULE_1___default())((p5) => {\n        const scene = new _Scene__WEBPACK_IMPORTED_MODULE_2__[\"default\"](p5, 900, 900);\n        p5.setup = scene.setup.bind(scene);\n        p5.draw = scene.draw.bind(scene);\n    });\n}\nmain();\n\n\n//# sourceURL=webpack://Reflections_Exercise/./src/js/index.ts?");
 
 /***/ })
 
