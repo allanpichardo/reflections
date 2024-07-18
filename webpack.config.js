@@ -21,7 +21,7 @@ module.exports = {
   },
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'public'),
+    path: path.resolve(__dirname, 'docs'),
     clean: true,
   },
   plugins: [
@@ -30,7 +30,7 @@ module.exports = {
     }),
   ],
   devServer: {
-    static: path.resolve(__dirname, 'public'),
+    static: path.resolve(__dirname, 'docs'),
     hot: true,
     open: true,
   },
