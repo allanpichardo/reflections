@@ -38,6 +38,13 @@ export default class Scene {
     setup(): void {
         this.p5.createCanvas(this.boundingBox.width, this.boundingBox.height);
         this.sceneObjects.forEach(sceneObject => sceneObject.setup());
+        this.p5.mouseClicked = this.onClick.bind(this);
+    }
+
+    onClick(): void {
+        this.sceneObjects.forEach(obj => {
+            obj.onClick();
+        });
     }
 
     draw(): void {

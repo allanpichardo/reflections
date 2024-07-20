@@ -49,4 +49,8 @@ export default class Draggable implements SceneObject {
             y: this.p5.mouseY
         });
     }
+
+    onClick() {
+        // no-op
+    }
 }

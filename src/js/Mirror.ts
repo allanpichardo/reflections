@@ -1,7 +1,6 @@
 import BoundingBox from "./BoundingBox";
 import p5 from "p5";
 import Clickable from "./Clickable";
-import Point from "./Point";
 
 export default class Mirror extends Clickable {
     static get HEIGHT(): number {
@@ -11,12 +10,10 @@ export default class Mirror extends Clickable {
     p5: p5;
     boundingBox: BoundingBox;
     isActive: boolean = false;
-    scale: number = 1;
 
     constructor(p5: p5, position: 'top' | 'bottom' | 'left' | 'right', roomBoundingBox: BoundingBox, active: boolean = false){
 
         const height = roomBoundingBox.height * 0.03;
-
         let boundingBox: BoundingBox = new BoundingBox(0, 0, 0, 0);
         switch(position) {
             case 'top':
@@ -67,12 +64,16 @@ export default class Mirror extends Clickable {
     }
 
     draw(): void {
+        super.draw();
         this.p5.push();
-        this.p5.fill(0, 0, 255, this.isActive ? 255 : 0);
-        this.p5.stroke(0, 0, 255, this.isActive ? 255 : 127);
+        this.p5.fill(0, 0, 255, this.isActive ? 255 : 20);
+        this.p5.stroke(!this.isActive ? 255 : 0, !this.isActive ? 255 : 0, this.isActive ? 255 : 0, this.isActive ? 255 : 127);
         this.p5.strokeWeight(.11);
         this.p5.rect(this.boundingBox.position.x, this.boundingBox.position.y, this.boundingBox.width, this.boundingBox.height);
         this.p5.pop();
     }
 
+    onClick() {
+        super.onClick();
+    }
 }

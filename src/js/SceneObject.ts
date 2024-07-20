@@ -6,4 +6,5 @@ export default interface SceneObject {
     boundingBox: BoundingBox;
     setup(): void;
     draw(): void;
+    onClick(): void;
 }

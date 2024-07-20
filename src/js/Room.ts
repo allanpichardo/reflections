@@ -43,4 +43,8 @@ export default class Room implements SceneObject {
 
         this.mirrors.forEach(mirror => mirror.draw());
     }
+
+    onClick() {
+        this.mirrors.forEach(mirror => mirror.onClick());
+    }
 }

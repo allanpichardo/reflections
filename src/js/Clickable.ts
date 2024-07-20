@@ -16,15 +16,20 @@ export default class Clickable implements SceneObject {
     }
 
     setup(): void {
-        this.p5.mouseClicked = () => this.handleClick();
+        // this.p5.mouseClicked = () => this.handleClick();
     }
 
     draw() {
-        // do nothing
+        this.isMouseOver = this.boundingBox.contains({x: this.p5.mouseX, y: this.p5.mouseY});
+        if(this.isMouseOver) {
+            this.p5.cursor(this.p5.HAND);
+        } else {
+            this.p5.cursor(this.p5.ARROW);
+        }
     }
 
-    handleClick(): void {
-        if(this.isMouseOver){
+    onClick() {
+        if(this.isMouseOver) {
             this.isActive = !this.isActive;
         }
     }
