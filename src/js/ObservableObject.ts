@@ -2,7 +2,8 @@ import Draggable from "./base/Draggable";
 import BoundingBox from "./interfaces/BoundingBox";
 import p5 from "p5";
 import ReflectionPoint from "./ReflectionPoint";
-import Ray from "../Ray";
+import Ray from "./Ray";
+import Mirror from "./Mirror";
 
 export default class ObservableObject extends Draggable {
     isReflection: boolean;
@@ -22,13 +23,12 @@ export default class ObservableObject extends Draggable {
         this.ray = null;
     }
 
-    castRay(reflectionPoint: ReflectionPoint) {
+    castRay(reflectionPoint: ReflectionPoint, mirrors: Mirror[]) {
         const origin = new p5.Vector(this.boundingBox.center.x, this.boundingBox.center.y);
         const destination = new p5.Vector(reflectionPoint.boundingBox.position.x, reflectionPoint.boundingBox.position.y);
-        const direction = p5.Vector.sub(destination, origin);
-        // console.log(origin, destination, direction);
+        const direction = p5.Vector.sub(destination, origin).normalize();
 
-        this.ray = new Ray(this.p5, origin, direction);
+        this.ray = new Ray(this.p5, origin, direction, mirrors);
         this.ray.cast();
         this.hasCastRay = true;
     }
@@ -46,7 +46,6 @@ export default class ObservableObject extends Draggable {
     draw() {
         super.draw();
 
-        // Draw triangle
         this.p5.push();
         this.p5.stroke(0, this.isReflection ? 0 : 255);
         this.p5.fill(255, 0, 0, this.isReflection ? 20 : 255);
@@ -60,7 +59,6 @@ export default class ObservableObject extends Draggable {
         );
         this.p5.pop();
 
-        // If a ray has been cast, draw it
         if(this.ray){
             this.ray.draw();
         }

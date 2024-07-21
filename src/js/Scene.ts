@@ -2,8 +2,6 @@ import p5 from "p5";
 import SceneObject from "./interfaces/SceneObject";
 import Room from "./Room";
 import BoundingBox from "./interfaces/BoundingBox";
-import ReflectionPoint from "./ReflectionPoint";
-import Ray from "../Ray";
 
 /**
  * This is where the main sketch is built. This class is a controller

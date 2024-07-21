@@ -50,7 +50,7 @@ export default class Room implements SceneObject {
         if(this.isVirtual) return;
 
         const reflectionPoint = event.detail as ReflectionPoint;
-        this.observableObject.castRay(reflectionPoint);
+        this.observableObject.castRay(reflectionPoint, this.mirrors);
     }
 
     onReflectionHover(event: CustomEvent) {

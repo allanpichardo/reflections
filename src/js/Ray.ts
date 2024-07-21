@@ -1,12 +1,13 @@
-import BoundingBox from "./js/interfaces/BoundingBox";
-import SceneObject from "./js/interfaces/SceneObject";
+import BoundingBox from "./interfaces/BoundingBox";
+import SceneObject from "./interfaces/SceneObject";
 import p5 from "p5";
-import Mirror from "./js/Mirror";
+import Mirror from "./Mirror";
 
 class RayLine {
     origin: p5.Vector;
     direction: p5.Vector;
     t: number;
+    maxT: number = 1000000;
 
     constructor(origin: p5.Vector, direction: p5.Vector, t: number = 0) {
         this.origin = origin;
@@ -14,8 +15,12 @@ class RayLine {
         this.t = t;
     }
 
-    getEndpoint(): p5.Vector {
-        return this.origin.copy().add(this.direction.copy().mult(this.t));
+    getEndpoint(t: number | null = null): p5.Vector {
+        return this.origin.copy().add(this.direction.copy().mult(t ?? this.t));
+    }
+
+    setMaxT(maxT: number): void {
+        this.maxT = maxT;
     }
 }
 
@@ -48,7 +53,7 @@ export default class Ray implements SceneObject {
         let currentRayLine = this.rayLines[0];
 
         for (let i = 0; i < this.numberOfReflections; i++) {
-            const nextReflection = this.getNextReflection(currentRayLine);
+            const nextReflection = this.getNextRayline(currentRayLine);
             if (nextReflection === null) {
                 break;
             }
@@ -57,31 +62,59 @@ export default class Ray implements SceneObject {
         }
     }
 
-    getNextReflection(rayLine: RayLine): RayLine | null {
+    /**
+     * Trace a ray and return the endpoint and the mirror it intersects with
+     * @param rayLine
+     */
+    getReflectionEndpointAndMirror(rayLine: RayLine): { maxT: number, mirror: Mirror } | null {
         let intersectedMirror = null;
-        let t = 0;
         for(const mirror of this.mirrors) {
-            for(let i = 0; i < 100; i += 0.01) {
+            for(let i = 0; i < 100000; i += 0.1) {
                 rayLine.t = i;
                 const endpoint = rayLine.getEndpoint();
-                if(mirror.boundingBox.contains(endpoint)) {
-                    window.dispatchEvent(new CustomEvent('reflection-strike', { detail: mirror }));
+                if(mirror.boundingBox.contains({ x: endpoint.x, y: endpoint.y})) {
                     intersectedMirror = mirror;
+                    rayLine.setMaxT(i);
                     break;
                 }
             }
         }
+        rayLine.t = 0;
 
         if(intersectedMirror === null) {
-            rayLine.t = 0;
             return null;
         }
 
-        const endpoint = rayLine.getEndpoint();
-        rayLine.t = 0;
-        const normal = intersectedMirror.normal;
+        return {
+            maxT: rayLine.maxT,
+            mirror: intersectedMirror
+        };
+    }
+
+    /**
+     * Get the next rayline after reflection.
+     *
+     * Note: This function is not optimized for performance, but I
+     * need a simple way to get the next rayline for the demo given
+     * the time constraints.
+     * @param rayLine
+     */
+    getNextRayline(rayLine: RayLine): RayLine | null {
+        const reflectionData = this.getReflectionEndpointAndMirror(rayLine);
+        if(reflectionData === null) {
+            return null;
+        }
+
+        const endpoint = rayLine.getEndpoint(reflectionData.maxT);
+        const normal = reflectionData.mirror.normal;
         const reflection = rayLine.direction.copy().reflect(normal);
-        return new RayLine(rayLine.getEndpoint(), reflection);
+        const nextRayLine = new RayLine(endpoint, reflection);
+        const nextReflection = this.getReflectionEndpointAndMirror(nextRayLine);
+        if(nextReflection !== null) {
+            nextRayLine.setMaxT(nextReflection.maxT);
+        }
+
+        return nextRayLine;
     }
 
     cast(): void {
@@ -101,8 +134,8 @@ export default class Ray implements SceneObject {
 
         for(const rayLine of this.rayLines) {
             this.p5.line(rayLine.origin.x, rayLine.origin.y, rayLine.getEndpoint().x, rayLine.getEndpoint().y);
-            if(rayLine.t < 1) {
-                rayLine.t += 0.01;
+            if(rayLine.t < rayLine.maxT) {
+                rayLine.t += 10;
             }
         }
 
