@@ -3,6 +3,7 @@ import BoundingBox from "./interfaces/BoundingBox";
 import p5 from "p5";
 import Mirror from "./Mirror";
 import ObservableObject from "./ObservableObject";
+import Eyeball from "./Eyeball";
 
 export default class Room implements SceneObject {
 
@@ -15,6 +16,7 @@ export default class Room implements SceneObject {
     isVirtual: boolean;
     mirrors: Mirror[] = [];
     observableObject: ObservableObject;
+    eyeball: Eyeball;
 
     constructor(p5: p5, x: number, y: number, size: number, isVirtual: boolean = false) {
         this.p5 = p5;
@@ -31,10 +33,13 @@ export default class Room implements SceneObject {
         }
 
         this.observableObject = new ObservableObject(p5, this.boundingBox, isVirtual);
+        this.eyeball = new Eyeball(p5, this.boundingBox, isVirtual);
     }
 
     setup(): void {
         this.mirrors.forEach(mirror => mirror.setup());
+        this.observableObject.setup();
+        this.eyeball.setup();
     }
 
     draw(): void {
@@ -47,20 +52,24 @@ export default class Room implements SceneObject {
 
         this.mirrors.forEach(mirror => mirror.draw());
         this.observableObject.draw();
+        this.eyeball.draw();
     }
 
     onClick() {
         this.mirrors.forEach(mirror => mirror.onClick());
         this.observableObject.onClick();
+        this.eyeball.onClick();
     }
 
     onMousePressed() {
         this.mirrors.forEach(mirror => mirror.onMousePressed());
         this.observableObject.onMousePressed();
+        this.eyeball.onMousePressed();
     }
 
     onMouseReleased() {
         this.mirrors.forEach(mirror => mirror.onMouseReleased());
         this.observableObject.onMouseReleased();
+        this.eyeball.onMouseReleased();
     }
 }
