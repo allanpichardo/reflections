@@ -47,11 +47,15 @@ export default class Room implements SceneObject {
     }
 
     onRayCast(event: CustomEvent) {
+        if(this.isVirtual) return;
+
         const reflectionPoint = event.detail as ReflectionPoint;
         this.observableObject.castRay(reflectionPoint);
     }
 
     onReflectionHover(event: CustomEvent) {
+        if(this.isVirtual) return;
+
         const reflectionPoint = event.detail as ReflectionPoint;
         this.observableObject.drawSightLine(reflectionPoint);
     }

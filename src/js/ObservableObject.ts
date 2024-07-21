@@ -26,8 +26,10 @@ export default class ObservableObject extends Draggable {
         const origin = new p5.Vector(this.boundingBox.center.x, this.boundingBox.center.y);
         const destination = new p5.Vector(reflectionPoint.boundingBox.position.x, reflectionPoint.boundingBox.position.y);
         const direction = p5.Vector.sub(destination, origin);
+        // console.log(origin, destination, direction);
 
         this.ray = new Ray(this.p5, origin, direction);
+        this.ray.cast();
         this.hasCastRay = true;
     }
 

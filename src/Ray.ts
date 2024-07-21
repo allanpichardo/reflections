@@ -27,6 +27,7 @@ export default class Ray implements SceneObject {
     mirrors: Mirror[];
     numberOfReflections: number;
     rayLines: RayLine[] = [];
+    isActivated: boolean = false;
 
     constructor(p5: p5, origin: p5.Vector, direction: p5.Vector, mirrors: Mirror[] = [], numberOfReflections: number = 1) {
         this.p5 = p5;
@@ -41,7 +42,6 @@ export default class Ray implements SceneObject {
         ];
 
         this.precomputeRayLines();
-        console.log(this.rayLines);
     }
 
     precomputeRayLines(): void {
@@ -84,17 +84,28 @@ export default class Ray implements SceneObject {
         return new RayLine(rayLine.getEndpoint(), reflection);
     }
 
+    cast(): void {
+        this.isActivated = true;
+    }
+
     setup(): void {
         // ignore
     }
 
     draw(): void {
+        if(!this.isActivated) return;
+
         this.p5.push();
         this.p5.stroke(0, 255, 0);
         this.p5.strokeWeight(2);
 
-        const endpoint = this.origin.copy().add(this.direction);
-        this.p5.line(this.boundingBox.position.x, this.boundingBox.position.y, this.boundingBox.width, this.boundingBox.height);
+        for(const rayLine of this.rayLines) {
+            this.p5.line(rayLine.origin.x, rayLine.origin.y, rayLine.getEndpoint().x, rayLine.getEndpoint().y);
+            if(rayLine.t < 1) {
+                rayLine.t += 0.01;
+            }
+        }
+
         this.p5.pop();
     }
     onClick(): void {

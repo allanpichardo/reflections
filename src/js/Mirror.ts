@@ -91,7 +91,9 @@ export default class Mirror extends Clickable {
     }
 
     onClick() {
-        this.castRay();
+        if(this.isMouseOver){
+            this.castRay();
+        }
     }
 
     draw(): void {
