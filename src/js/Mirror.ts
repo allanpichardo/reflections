@@ -1,6 +1,6 @@
-import BoundingBox from "./BoundingBox";
+import BoundingBox from "./interfaces/BoundingBox";
 import p5 from "p5";
-import Clickable from "./Clickable";
+import Clickable from "./base/Clickable";
 
 export default class Mirror extends Clickable {
     static get HEIGHT(): number {
@@ -71,9 +71,5 @@ export default class Mirror extends Clickable {
         this.p5.strokeWeight(.11);
         this.p5.rect(this.boundingBox.position.x, this.boundingBox.position.y, this.boundingBox.width, this.boundingBox.height);
         this.p5.pop();
-    }
-
-    onClick() {
-        super.onClick();
     }
 }

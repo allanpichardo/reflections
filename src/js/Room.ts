@@ -1,7 +1,8 @@
-import SceneObject from "./SceneObject";
-import BoundingBox from "./BoundingBox";
+import SceneObject from "./interfaces/SceneObject";
+import BoundingBox from "./interfaces/BoundingBox";
 import p5 from "p5";
 import Mirror from "./Mirror";
+import ObservableObject from "./ObservableObject";
 
 export default class Room implements SceneObject {
 
@@ -13,6 +14,7 @@ export default class Room implements SceneObject {
     boundingBox: BoundingBox;
     isVirtual: boolean;
     mirrors: Mirror[] = [];
+    observableObject: ObservableObject;
 
     constructor(p5: p5, x: number, y: number, size: number, isVirtual: boolean = false) {
         this.p5 = p5;
@@ -27,6 +29,8 @@ export default class Room implements SceneObject {
                 new Mirror(p5, 'right', this.boundingBox)
             ]
         }
+
+        this.observableObject = new ObservableObject(p5, this.boundingBox, isVirtual);
     }
 
     setup(): void {
@@ -42,9 +46,21 @@ export default class Room implements SceneObject {
         this.p5.pop();
 
         this.mirrors.forEach(mirror => mirror.draw());
+        this.observableObject.draw();
     }
 
     onClick() {
         this.mirrors.forEach(mirror => mirror.onClick());
+        this.observableObject.onClick();
+    }
+
+    onMousePressed() {
+        this.mirrors.forEach(mirror => mirror.onMousePressed());
+        this.observableObject.onMousePressed();
+    }
+
+    onMouseReleased() {
+        this.mirrors.forEach(mirror => mirror.onMouseReleased());
+        this.observableObject.onMouseReleased();
     }
 }

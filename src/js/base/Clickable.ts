@@ -1,7 +1,6 @@
-import BoundingBox from "./BoundingBox";
-import SceneObject from "./SceneObject";
+import BoundingBox from "../interfaces/BoundingBox";
+import SceneObject from "../interfaces/SceneObject";
 import p5 from "p5";
-import Point from "./Point";
 
 export default class Clickable implements SceneObject {
     p5: p5;
@@ -32,5 +31,13 @@ export default class Clickable implements SceneObject {
         if(this.isMouseOver) {
             this.isActive = !this.isActive;
         }
+    }
+
+    onMousePressed() {
+        // do nothing
+    }
+
+    onMouseReleased() {
+        // do nothing
     }
 }

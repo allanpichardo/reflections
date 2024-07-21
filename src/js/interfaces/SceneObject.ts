@@ -7,4 +7,6 @@ export default interface SceneObject {
     setup(): void;
     draw(): void;
     onClick(): void;
+    onMousePressed(): void;
+    onMouseReleased(): void;
 }

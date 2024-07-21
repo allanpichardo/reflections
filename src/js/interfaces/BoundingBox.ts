@@ -1,4 +1,4 @@
-import Point from "./Point";
+import Point from "../interfaces/Point";
 
 export default class BoundingBox {
     position: Point;

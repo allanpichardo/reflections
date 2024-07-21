@@ -1,7 +1,7 @@
 import p5 from "p5";
-import SceneObject from "./SceneObject";
+import SceneObject from "./interfaces/SceneObject";
 import Room from "./Room";
-import BoundingBox from "./BoundingBox";
+import BoundingBox from "./interfaces/BoundingBox";
 
 /**
  * This is where the main sketch is built. This class is a controller
@@ -39,12 +39,22 @@ export default class Scene {
         this.p5.createCanvas(this.boundingBox.width, this.boundingBox.height);
         this.sceneObjects.forEach(sceneObject => sceneObject.setup());
         this.p5.mouseClicked = this.onClick.bind(this);
+        this.p5.mousePressed = this.onMousePressed.bind(this);
+        this.p5.mouseReleased = this.onMouseReleased.bind(this);
     }
 
     onClick(): void {
         this.sceneObjects.forEach(obj => {
             obj.onClick();
         });
+    }
+
+    onMousePressed(): void {
+        this.sceneObjects.forEach(sceneObject => sceneObject.onMousePressed());
+    }
+
+    onMouseReleased(): void {
+        this.sceneObjects.forEach(sceneObject => sceneObject.onMouseReleased());
     }
 
     draw(): void {
