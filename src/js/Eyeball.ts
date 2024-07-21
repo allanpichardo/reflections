@@ -1,4 +1,3 @@
-import ObservableObject from "./ObservableObject";
 import BoundingBox from "./interfaces/BoundingBox";
 import p5 from "p5";
 import Draggable from "./base/Draggable";
