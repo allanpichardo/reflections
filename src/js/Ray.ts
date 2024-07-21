@@ -6,13 +6,21 @@ import Mirror from "./Mirror";
 class RayLine {
     origin: p5.Vector;
     direction: p5.Vector;
-    t: number;
     maxT: number = 1000000;
+    currentT: number = 0;
 
     constructor(origin: p5.Vector, direction: p5.Vector, t: number = 0) {
         this.origin = origin;
         this.direction = direction;
-        this.t = t;
+        this.currentT = t;
+    }
+
+    get t(): number {
+        return this.currentT;
+    }
+
+    set t(t: number) {
+        this.currentT = this.maxT > 0 ? Math.min(t, this.maxT) : t;
     }
 
     getEndpoint(t: number | null = null): p5.Vector {
@@ -33,8 +41,10 @@ export default class Ray implements SceneObject {
     numberOfReflections: number;
     rayLines: RayLine[] = [];
     isActivated: boolean = false;
+    sequenceIndex: number = 0;
+    isFinished: boolean = false;
 
-    constructor(p5: p5, origin: p5.Vector, direction: p5.Vector, mirrors: Mirror[] = [], numberOfReflections: number = 1) {
+    constructor(p5: p5, origin: p5.Vector, direction: p5.Vector, mirrors: Mirror[] = [], numberOfReflections: number = 5) {
         this.p5 = p5;
         this.boundingBox = new BoundingBox(origin.x, origin.y, direction.x, direction.y);
         this.origin = origin;
@@ -69,10 +79,10 @@ export default class Ray implements SceneObject {
     getReflectionEndpointAndMirror(rayLine: RayLine): { maxT: number, mirror: Mirror } | null {
         let intersectedMirror = null;
         for(const mirror of this.mirrors) {
-            for(let i = 0; i < 100000; i += 0.1) {
+            for(let i = 0; i < 100000; i++) {
                 rayLine.t = i;
                 const endpoint = rayLine.getEndpoint();
-                if(mirror.boundingBox.contains({ x: endpoint.x, y: endpoint.y})) {
+                if(i > 0 && mirror.boundingBox.contains({ x: endpoint.x, y: endpoint.y})) {
                     intersectedMirror = mirror;
                     rayLine.setMaxT(i);
                     break;
@@ -125,6 +135,7 @@ export default class Ray implements SceneObject {
         // ignore
     }
 
+
     draw(): void {
         if(!this.isActivated) return;
 
@@ -132,21 +143,40 @@ export default class Ray implements SceneObject {
         this.p5.stroke(0, 255, 0);
         this.p5.strokeWeight(2);
 
-        for(const rayLine of this.rayLines) {
+        for(let i = 0; i <= this.sequenceIndex; i++) {
+            const rayLine = this.rayLines[i];
             this.p5.line(rayLine.origin.x, rayLine.origin.y, rayLine.getEndpoint().x, rayLine.getEndpoint().y);
-            if(rayLine.t < rayLine.maxT) {
-                rayLine.t += 10;
+        }
+
+        if(!this.isFinished) {
+            const currentRayLine = this.rayLines[this.sequenceIndex];
+            if(currentRayLine.t >= currentRayLine.maxT) {
+                this.sequenceIndex++;
+                if(this.sequenceIndex < this.rayLines.length) {
+                    this.rayLines[this.sequenceIndex].t = 0;
+                } else {
+                    this.sequenceIndex--; // This is a hack to prevent the sequenceIndex from going out of bounds. I would have to refactor the code to fix this.
+                    this.isFinished = true;
+                    // todo: Do something when the ray is done
+                }
+            }
+
+            if(this.sequenceIndex < this.rayLines.length) {
+                this.rayLines[this.sequenceIndex].t += 25;
             }
         }
 
         this.p5.pop();
     }
+
     onClick(): void {
         // ignore
     }
+
     onMousePressed(): void {
         // ignore
     }
+
     onMouseReleased(): void {
         // ignore
     }
