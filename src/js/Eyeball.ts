@@ -31,5 +31,6 @@ export default class Eyeball extends Draggable {
             this.boundingBox.width,
             this.boundingBox.height
         );
+        this.p5.pop();
     }
 }

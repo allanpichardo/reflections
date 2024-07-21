@@ -1,6 +1,7 @@
 import BoundingBox from "./interfaces/BoundingBox";
 import p5 from "p5";
 import Clickable from "./base/Clickable";
+import ReflectionPoint from "./ReflectionPoint";
 
 export default class Mirror extends Clickable {
     static get HEIGHT(): number {
@@ -9,9 +10,12 @@ export default class Mirror extends Clickable {
 
     p5: p5;
     boundingBox: BoundingBox;
+    position: 'top' | 'bottom' | 'left' | 'right';
     isActive: boolean = false;
+    reflectionPoint: ReflectionPoint;
+    enabled: boolean = true;
 
-    constructor(p5: p5, position: 'top' | 'bottom' | 'left' | 'right', roomBoundingBox: BoundingBox, active: boolean = false){
+    constructor(p5: p5, position: 'top' | 'bottom' | 'left' | 'right', roomBoundingBox: BoundingBox, active: boolean = false, enabled: boolean = true){
 
         const height = roomBoundingBox.height * 0.03;
         let boundingBox: BoundingBox = new BoundingBox(0, 0, 0, 0);
@@ -55,12 +59,39 @@ export default class Mirror extends Clickable {
         super(p5, boundingBox, active);
 
         this.p5 = p5;
+        this.position = position;
         this.boundingBox = boundingBox;
         this.isActive = active;
+        this.reflectionPoint = new ReflectionPoint(p5, this.boundingBox);
+        this.enabled = enabled;
+    }
+
+    get normal(): p5.Vector {
+        switch(this.position){
+            case 'top':
+                return this.p5.createVector(0, 1);
+            case 'bottom':
+                return this.p5.createVector(0, -1);
+            case 'left':
+                return this.p5.createVector(1, 0);
+            case 'right':
+                return this.p5.createVector(-1, 0);
+            default:
+                throw new Error('Invalid mirror position');
+        }
     }
 
     setup(): void {
         super.setup();
+        this.reflectionPoint.setup();
+    }
+
+    castRay(): void {
+        window.dispatchEvent(new CustomEvent('ray-cast', { detail: this.reflectionPoint}));
+    }
+
+    onClick() {
+        this.castRay();
     }
 
     draw(): void {
@@ -71,5 +102,10 @@ export default class Mirror extends Clickable {
         this.p5.strokeWeight(.11);
         this.p5.rect(this.boundingBox.position.x, this.boundingBox.position.y, this.boundingBox.width, this.boundingBox.height);
         this.p5.pop();
+
+        if(this.isMouseOver){
+            window.dispatchEvent(new CustomEvent('reflection-hover', { detail: this.reflectionPoint }));
+            this.reflectionPoint.show();
+        }
     }
 }

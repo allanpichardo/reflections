@@ -4,6 +4,7 @@ import p5 from "p5";
 import Mirror from "./Mirror";
 import ObservableObject from "./ObservableObject";
 import Eyeball from "./Eyeball";
+import ReflectionPoint from "./ReflectionPoint";
 
 export default class Room implements SceneObject {
 
@@ -25,10 +26,10 @@ export default class Room implements SceneObject {
 
         if(!isVirtual){
             this.mirrors = [
-                new Mirror(p5, 'top', this.boundingBox),
-                new Mirror(p5, 'bottom', this.boundingBox, true),
-                new Mirror(p5, 'left', this.boundingBox),
-                new Mirror(p5, 'right', this.boundingBox)
+                new Mirror(p5, 'top', this.boundingBox, true, false),
+                new Mirror(p5, 'bottom', this.boundingBox, true, false),
+                new Mirror(p5, 'left', this.boundingBox, true, false),
+                new Mirror(p5, 'right', this.boundingBox, true, false)
             ]
         }
 
@@ -40,6 +41,19 @@ export default class Room implements SceneObject {
         this.mirrors.forEach(mirror => mirror.setup());
         this.observableObject.setup();
         this.eyeball.setup();
+
+        window.addEventListener('reflection-hover', this.onReflectionHover.bind(this) as EventListener);
+        window.addEventListener('ray-cast', this.onRayCast.bind(this) as EventListener);
+    }
+
+    onRayCast(event: CustomEvent) {
+        const reflectionPoint = event.detail as ReflectionPoint;
+        this.observableObject.castRay(reflectionPoint);
+    }
+
+    onReflectionHover(event: CustomEvent) {
+        const reflectionPoint = event.detail as ReflectionPoint;
+        this.observableObject.drawSightLine(reflectionPoint);
     }
 
     draw(): void {

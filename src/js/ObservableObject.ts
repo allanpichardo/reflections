@@ -1,9 +1,13 @@
 import Draggable from "./base/Draggable";
 import BoundingBox from "./interfaces/BoundingBox";
 import p5 from "p5";
+import ReflectionPoint from "./ReflectionPoint";
+import Ray from "../Ray";
 
 export default class ObservableObject extends Draggable {
     isReflection: boolean;
+    hasCastRay: boolean = false;
+    ray: Ray | null
 
     constructor(p5: p5, roomBoundingBox: BoundingBox, isReflection: boolean) {
         const boundingBox = new BoundingBox(
@@ -15,12 +19,32 @@ export default class ObservableObject extends Draggable {
 
         super(p5, boundingBox.position.x, boundingBox.position.y, boundingBox.width, boundingBox.height);
         this.isReflection = isReflection;
+        this.ray = null;
     }
 
+    castRay(reflectionPoint: ReflectionPoint) {
+        const origin = new p5.Vector(this.boundingBox.center.x, this.boundingBox.center.y);
+        const destination = new p5.Vector(reflectionPoint.boundingBox.position.x, reflectionPoint.boundingBox.position.y);
+        const direction = p5.Vector.sub(destination, origin);
+
+        this.ray = new Ray(this.p5, origin, direction);
+        this.hasCastRay = true;
+    }
+
+    drawSightLine(reflectionPoint: ReflectionPoint) {
+        if(this.hasCastRay) return;
+
+        this.p5.push();
+        this.p5.stroke(0, 10, 200);
+        this.p5.strokeWeight(1);
+        this.p5.line(this.boundingBox.center.x, this.boundingBox.center.y, reflectionPoint.boundingBox.position.x, reflectionPoint.boundingBox.position.y);
+        this.p5.pop();
+    }
 
     draw() {
         super.draw();
 
+        // Draw triangle
         this.p5.push();
         this.p5.stroke(0, this.isReflection ? 0 : 255);
         this.p5.fill(255, 0, 0, this.isReflection ? 20 : 255);
@@ -33,6 +57,11 @@ export default class ObservableObject extends Draggable {
             this.boundingBox.position.y + this.boundingBox.height
         );
         this.p5.pop();
+
+        // If a ray has been cast, draw it
+        if(this.ray){
+            this.ray.draw();
+        }
     }
 
 }
