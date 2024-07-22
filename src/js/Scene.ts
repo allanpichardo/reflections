@@ -7,7 +7,7 @@ import BoundingBox from "./interfaces/BoundingBox";
  * This is where the main sketch is built. This class is a controller
  * that manages the scene objects and the canvas.
  *
- * The scene is a 5 x 5 grid of rooms. The center room is the main room
+ * The scene is a grid of rooms. The center room is the main room
  * and all other rooms are reserved canvas space for possible virtual
  * rooms.
  */
@@ -24,6 +24,11 @@ export default class Scene {
         this.buildScene(roomsPerRow, roomSize);
     }
 
+    /**
+     * Create the room grid. To see how the scene is built, see the Room class.
+     * @param roomsPerRow
+     * @param roomSize
+     */
     buildScene(roomsPerRow: number, roomSize: number): void {
         for(let i = 0; i < roomsPerRow; i++) {
             for(let j = 0; j < roomsPerRow; j++) {

@@ -14,12 +14,9 @@ interface Reflection {
 
 export default class Room implements SceneObject {
 
-    static get SIZE(): number {
-        return 200;
-    }
-
     p5: p5;
     boundingBox: BoundingBox;
+    size: number;
     isVirtual: boolean;
     mirrors: Mirror[] = [];
     observableObject: ObservableObject;
@@ -27,9 +24,11 @@ export default class Room implements SceneObject {
     numberOfReflections: number;
     showReflection: boolean = false;
     reflectionData: Reflection | null = null;
+    reflectionPoints: Map<string, p5.Vector>
 
     constructor(p5: p5, x: number, y: number, size: number, isVirtual: boolean = false, numberOfReflections: number = 1) {
         this.p5 = p5;
+        this.size = size;
         this.boundingBox = new BoundingBox(x - size / 2, y - size / 2, size, size);
         this.isVirtual = isVirtual;
 
@@ -45,6 +44,7 @@ export default class Room implements SceneObject {
         this.observableObject = new ObservableObject(p5, this.boundingBox, isVirtual);
         this.eyeball = new Eyeball(p5, this.boundingBox, isVirtual);
         this.numberOfReflections = numberOfReflections;
+        this.reflectionPoints = new Map();
     }
 
     setup(): void {
@@ -55,10 +55,39 @@ export default class Room implements SceneObject {
         window.addEventListener('reflection-hover', this.onReflectionHover.bind(this) as EventListener);
         window.addEventListener('ray-cast', this.onRayCast.bind(this) as EventListener);
         window.addEventListener('ray-finished', this.onRayFinished.bind(this) as EventListener);
+        window.addEventListener('ray-bounce', this.onRayBounce.bind(this) as EventListener);
     }
 
+    /**
+     * This event is triggered when a ray bounces off a mirror.
+     * It should recursively calculate the reflection points
+     * however I ran out of time to implement this correctly.
+     * @param event
+     */
+    onRayBounce(event: CustomEvent) {
+        if(this.isVirtual || this.showReflection || this.reflectionData) return;
+
+        const rayLine = event.detail.rayLine as RayLine;
+        const mirror = event.detail.mirror as Mirror;
+
+        for(const [loc, point] of this.reflectionPoints){
+            const reflection = point.copy().reflect(mirror.normal);
+            console.log(mirror.position, reflection);
+            // adding reflections to the map to avoid duplicates
+            this.reflectionPoints.set(
+                `${reflection.x},${reflection.y}`,
+                reflection
+            );
+        }
+    }
+
+    /**
+     * This event is triggered when a ray finishes casting
+     * and either hits the eyeball or exhausts all reflections.
+     * @param event
+     */
     onRayFinished(event: CustomEvent) {
-        if(this.isVirtual) return;
+        if(this.isVirtual || this.showReflection || this.reflectionData) return;
 
         const rayLines = event.detail.rayLines as RayLine[];
         const targetFound = event.detail.targetFound as boolean;
@@ -68,6 +97,11 @@ export default class Room implements SceneObject {
         this.calculateReflection(rayLines);
     }
 
+    /**
+     * Calculates a sight line from the eyeball to the final
+     * reflection image.
+     * @param rayLines
+     */
     calculateReflection(rayLines: RayLine[]) {
         const sightLine = rayLines[rayLines.length - 1];
         const sightDirection = sightLine.direction.copy().mult(-1);
@@ -76,22 +110,42 @@ export default class Room implements SceneObject {
         let sightLength = 0;
         for(let i = 0; i < rayLines.length; i++) {
             const rayLine = rayLines[i];
-            sightLength += rayLine.getEndpoint(rayLine.maxT).dist(rayLine.origin);
+            sightLength += rayLine.maxT;
         }
 
         const reflectionOrigin = sightEndpoint.copy().add(sightDirection.copy().mult(sightLength));
 
+        this.reflectionPoints.set(
+            `${reflectionOrigin.x},${reflectionOrigin.y}`,
+            reflectionOrigin
+        )
+
         this.showReflection = true;
         this.reflectionData = {
             start: sightEndpoint,
-            end: reflectionOrigin
+            end: reflectionOrigin,
         };
     }
 
+    /**
+     * This event is triggered when a user clicks on a mirror
+     * to cast a ray.
+     * @param event
+     */
     onRayCast(event: CustomEvent) {
         if(this.isVirtual) return;
 
+        // We start with the objects position as the first reflection point
+        // and then on each bounce we reflect the object over the mirror
+        // normal
         this.showReflection = false;
+        this.reflectionData = null;
+        this.reflectionPoints.clear();
+        this.reflectionPoints.set(
+            `${this.observableObject.boundingBox.center.x},${this.observableObject.boundingBox.center.y}`,
+        new p5.Vector(this.observableObject.boundingBox.center.x, this.observableObject.boundingBox.center.y)
+        );
+
         const reflectionPoint = event.detail as ReflectionPoint;
         this.observableObject.castRay(reflectionPoint, this.mirrors, this.numberOfReflections, this.eyeball);
     }
@@ -101,6 +155,21 @@ export default class Room implements SceneObject {
 
         const reflectionPoint = event.detail as ReflectionPoint;
         this.observableObject.drawSightLine(reflectionPoint);
+    }
+
+    drawTriangle(position: p5.Vector) {
+        this.p5.push();
+        this.p5.stroke(0);
+        this.p5.fill(255, 0, 0, 127);
+        this.p5.triangle(
+            position.x,
+            position.y,
+            position.x + this.observableObject.boundingBox.width,
+            position.y,
+            position.x + this.observableObject.boundingBox.width / 2,
+            position.y + this.observableObject.boundingBox.height
+        );
+        this.p5.pop();
     }
 
     draw(): void {
@@ -122,18 +191,11 @@ export default class Room implements SceneObject {
             this.p5.line(this.reflectionData.start.x, this.reflectionData.start.y, this.reflectionData.end.x, this.reflectionData.end.y);
             this.p5.pop();
 
-            this.p5.push();
-            this.p5.stroke(0);
-            this.p5.fill(255, 0, 0, 127);
-            this.p5.triangle(
-                this.reflectionData.end.x,
-                this.reflectionData.end.y,
-                this.reflectionData.end.x + this.observableObject.boundingBox.width,
-                this.reflectionData.end.y,
-                this.reflectionData.end.x + this.observableObject.boundingBox.width / 2,
-                this.reflectionData.end.y + this.observableObject.boundingBox.height
-            );
-            this.p5.pop();
+            // Skipping the first object
+            for(let i = 1; i < this.reflectionPoints.size; i++){
+                const reflectionPoint = Array.from(this.reflectionPoints.values())[i];
+                this.drawTriangle(reflectionPoint);
+            }
         }
     }
 

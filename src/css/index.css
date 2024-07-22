@@ -10,11 +10,12 @@ body {
 
   main {
     display: grid;
-    grid-template-columns: 1fr 100px;
-    grid-template-rows: 1fr auto;
+    grid-column-gap: 25px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
 
     .sandbox {
-      grid-area: 1 / 1 / 2 / 2;
+      grid-area: 1 / 1 / 3 / 2;
     }
 
     .instructions {
@@ -22,13 +23,13 @@ body {
     }
 
     .controls {
-      align-items: center;
+      align-items: start;
       display: flex;
       flex-direction: row;
       gap: 10px;
-      grid-area: 2 / 1 / 3 / 2;
-      justify-content: center;
-      margin-top: 10px;
+      grid-area: 2 / 2 / 3 / 3;
+      justify-content: start;
+      margin: 25px;
 
       input {
         width: 50%;

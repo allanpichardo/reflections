@@ -111,7 +111,7 @@ export default class Ray implements SceneObject {
     }
 
     /**
-     * Get the next rayline after reflection.
+     * Gets the next rayline after reflection.
      *
      * Note: This function is not optimized for performance, but I
      * need a simple way to get the next rayline for the demo given
@@ -173,13 +173,10 @@ export default class Ray implements SceneObject {
                 this.sequenceIndex = this.sequenceIndex < this.rayLines.length ? this.sequenceIndex + 1 : this.sequenceIndex;
                 if(this.sequenceIndex < this.rayLines.length) {
                     this.rayLines[this.sequenceIndex].t = 0;
-
-                    // dispatching this event to notify the scene to draw
-                    // a virtual room on the other side of the mirror
-                    window.dispatchEvent(new CustomEvent('ray-reflection', {
+                    window.dispatchEvent(new CustomEvent('ray-bounce', {
                         detail: {
-                            endpoint: this.rayLines[this.sequenceIndex].getEndpoint(),
-                            mirror: this.getReflectionEndpointAndMirror(this.rayLines[this.sequenceIndex])?.mirror
+                            rayLine: this.rayLines[this.sequenceIndex],
+                            mirror: this.mirrors.find(mirror => mirror.boundingBox.contains(this.rayLines[this.sequenceIndex].getEndpoint()))
                         }
                     }))
                 } else {
