@@ -20,6 +20,8 @@ export default class Eyeball extends Draggable {
     }
 
     draw() {
+        if(this.isReflection) return;
+
         super.draw();
 
         this.p5.push();

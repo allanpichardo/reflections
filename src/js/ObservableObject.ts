@@ -47,18 +47,20 @@ export default class ObservableObject extends Draggable {
     draw() {
         super.draw();
 
-        this.p5.push();
-        this.p5.stroke(0, this.isReflection ? 0 : 255);
-        this.p5.fill(255, 0, 0, this.isReflection ? 20 : 255);
-        this.p5.triangle(
-            this.boundingBox.position.x,
-            this.boundingBox.position.y,
-            this.boundingBox.position.x + this.boundingBox.width,
-            this.boundingBox.position.y,
-            this.boundingBox.position.x + this.boundingBox.width / 2,
-            this.boundingBox.position.y + this.boundingBox.height
-        );
-        this.p5.pop();
+        if(!this.isReflection) {
+            this.p5.push();
+            this.p5.stroke(0, this.isReflection ? 0 : 255);
+            this.p5.fill(255, 0, 0, this.isReflection ? 20 : 255);
+            this.p5.triangle(
+                this.boundingBox.position.x,
+                this.boundingBox.position.y,
+                this.boundingBox.position.x + this.boundingBox.width,
+                this.boundingBox.position.y,
+                this.boundingBox.position.x + this.boundingBox.width / 2,
+                this.boundingBox.position.y + this.boundingBox.height
+            );
+            this.p5.pop();
+        }
 
         if(this.ray){
             this.ray.draw();

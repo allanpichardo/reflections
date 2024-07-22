@@ -4,7 +4,7 @@ import p5 from "p5";
 import Mirror from "./Mirror";
 import Eyeball from "./Eyeball";
 
-class RayLine {
+export class RayLine {
     origin: p5.Vector;
     direction: p5.Vector;
     maxT: number = 1000000;
@@ -184,7 +184,12 @@ export default class Ray implements SceneObject {
                     }))
                 } else {
                     this.isFinished = true;
-                    window.dispatchEvent(new CustomEvent('ray-finished'));
+                    window.dispatchEvent(new CustomEvent('ray-finished', {
+                        detail: {
+                            rayLines: this.rayLines,
+                            targetFound: this.targetFound
+                        }
+                    }));
                 }
             }
 
