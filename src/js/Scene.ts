@@ -29,7 +29,7 @@ export default class Scene {
             for(let j = 0; j < roomsPerRow; j++) {
                 const mid = Math.floor(roomsPerRow / 2);
                 const isVirtual = !(i === mid && j === mid);
-                const room = new Room(this.p5, (i * roomSize + roomSize / 2), (j * roomSize + roomSize / 2), roomSize, isVirtual);
+                const room = new Room(this.p5, (i * roomSize + roomSize / 2), (j * roomSize + roomSize / 2), roomSize, isVirtual, roomsPerRow - 2);
                 this.sceneObjects.set(`${i},${j}`, room);
             }
         }

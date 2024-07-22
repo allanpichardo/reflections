@@ -25,7 +25,7 @@ function main(): void {
         startSketch(parseInt(reflectionSlider.value), container);
     });
 
-    startSketch(1, container);
+    startSketch(3, container);
 }
 
 main();

@@ -18,8 +18,9 @@ export default class Room implements SceneObject {
     mirrors: Mirror[] = [];
     observableObject: ObservableObject;
     eyeball: Eyeball;
+    numberOfReflections: number;
 
-    constructor(p5: p5, x: number, y: number, size: number, isVirtual: boolean = false) {
+    constructor(p5: p5, x: number, y: number, size: number, isVirtual: boolean = false, numberOfReflections: number = 1) {
         this.p5 = p5;
         this.boundingBox = new BoundingBox(x - size / 2, y - size / 2, size, size);
         this.isVirtual = isVirtual;
@@ -35,6 +36,7 @@ export default class Room implements SceneObject {
 
         this.observableObject = new ObservableObject(p5, this.boundingBox, isVirtual);
         this.eyeball = new Eyeball(p5, this.boundingBox, isVirtual);
+        this.numberOfReflections = numberOfReflections;
     }
 
     setup(): void {
@@ -50,7 +52,7 @@ export default class Room implements SceneObject {
         if(this.isVirtual) return;
 
         const reflectionPoint = event.detail as ReflectionPoint;
-        this.observableObject.castRay(reflectionPoint, this.mirrors);
+        this.observableObject.castRay(reflectionPoint, this.mirrors, this.numberOfReflections, this.eyeball);
     }
 
     onReflectionHover(event: CustomEvent) {

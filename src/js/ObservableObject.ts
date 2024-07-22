@@ -4,6 +4,7 @@ import p5 from "p5";
 import ReflectionPoint from "./ReflectionPoint";
 import Ray from "./Ray";
 import Mirror from "./Mirror";
+import Eyeball from "./Eyeball";
 
 export default class ObservableObject extends Draggable {
     isReflection: boolean;
@@ -23,12 +24,12 @@ export default class ObservableObject extends Draggable {
         this.ray = null;
     }
 
-    castRay(reflectionPoint: ReflectionPoint, mirrors: Mirror[]) {
+    castRay(reflectionPoint: ReflectionPoint, mirrors: Mirror[], numberOfReflections: number, eyeball: Eyeball) {
         const origin = new p5.Vector(this.boundingBox.center.x, this.boundingBox.center.y);
         const destination = new p5.Vector(reflectionPoint.boundingBox.position.x, reflectionPoint.boundingBox.position.y);
         const direction = p5.Vector.sub(destination, origin).normalize();
 
-        this.ray = new Ray(this.p5, origin, direction, mirrors);
+        this.ray = new Ray(this.p5, origin, direction, mirrors, numberOfReflections, eyeball);
         this.ray.cast();
         this.hasCastRay = true;
     }
