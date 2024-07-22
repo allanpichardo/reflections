@@ -20,6 +20,11 @@ function startSketch(roomsPerRow: number, container: HTMLElement) {
 function main(): void {
     const container = document.querySelector('.sandbox') as HTMLElement;
     const reflectionSlider = document.querySelector('.controls input') as HTMLInputElement;
+    const resetButton = document.querySelector('.controls #reset') as HTMLButtonElement;
+
+    resetButton.addEventListener('click', () => {
+        startSketch(parseInt(reflectionSlider.value), container);
+    });
 
     reflectionSlider.addEventListener('input', (e: Event) => {
         startSketch(parseInt(reflectionSlider.value), container);

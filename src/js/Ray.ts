@@ -144,41 +144,31 @@ export default class Ray implements SceneObject {
         // ignore
     }
 
-
     draw(): void {
-        if(!this.isActivated) return;
+        if (!this.isActivated) return;
 
         this.p5.push();
-
-        if(this.targetFound && this.isFinished) {
-            this.p5.stroke(0, 255, 0);
-        } else {
-            this.p5.stroke(255, 0, 255);
-        }
-
         this.p5.strokeWeight(2);
+        this.p5.stroke(this.targetFound && this.isFinished ? [0, 255, 0] : [255, 0, 255]);
 
-        for(let i = 0; i <= this.sequenceIndex; i++) {
+        for (let i = 0; i <= this.sequenceIndex; i++) {
             const rayLine = this.rayLines[i];
-            if(!rayLine) {
-                continue;
-            }
-
+            if (!rayLine) continue;
             this.p5.line(rayLine.origin.x, rayLine.origin.y, rayLine.getEndpoint().x, rayLine.getEndpoint().y);
         }
 
-        if(!this.isFinished) {
+        if (!this.isFinished) {
             const currentRayLine = this.rayLines[this.sequenceIndex];
-            if(currentRayLine.t >= currentRayLine.maxT) {
-                this.sequenceIndex = this.sequenceIndex < this.rayLines.length ? this.sequenceIndex + 1 : this.sequenceIndex;
-                if(this.sequenceIndex < this.rayLines.length) {
+            if (currentRayLine.t >= currentRayLine.maxT) {
+                if (this.sequenceIndex + 1 < this.rayLines.length) {
+                    this.sequenceIndex++;
                     this.rayLines[this.sequenceIndex].t = 0;
                     window.dispatchEvent(new CustomEvent('ray-bounce', {
                         detail: {
                             rayLine: this.rayLines[this.sequenceIndex],
                             mirror: this.mirrors.find(mirror => mirror.boundingBox.contains(this.rayLines[this.sequenceIndex].getEndpoint()))
                         }
-                    }))
+                    }));
                 } else {
                     this.isFinished = true;
                     window.dispatchEvent(new CustomEvent('ray-finished', {
@@ -188,10 +178,8 @@ export default class Ray implements SceneObject {
                         }
                     }));
                 }
-            }
-
-            if(this.sequenceIndex < this.rayLines.length) {
-                this.rayLines[this.sequenceIndex].t += 25;
+            } else {
+                currentRayLine.t += 25;
             }
         }
 

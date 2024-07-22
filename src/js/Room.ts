@@ -95,6 +95,12 @@ export default class Room implements SceneObject {
         if(!targetFound) return;
 
         this.calculateReflection(rayLines);
+        this.showResetButton();
+    }
+
+    showResetButton() {
+        const button = document.querySelector('#reset') as HTMLButtonElement;
+        button.style.display = 'block';
     }
 
     /**
@@ -133,7 +139,7 @@ export default class Room implements SceneObject {
      * @param event
      */
     onRayCast(event: CustomEvent) {
-        if(this.isVirtual) return;
+        if(this.isVirtual || this.showReflection || this.reflectionData || this.observableObject.hasCastRay) return;
 
         // We start with the objects position as the first reflection point
         // and then on each bounce we reflect the object over the mirror

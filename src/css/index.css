@@ -25,14 +25,37 @@ body {
     .controls {
       align-items: start;
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       gap: 10px;
       grid-area: 2 / 2 / 3 / 3;
       justify-content: start;
       margin: 25px;
 
+      label {
+        width: 100%;
+      }
+
       input {
         width: 50%;
+      }
+
+      button {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        cursor: pointer;
+        display: none;
+        font-size: 16px;
+        margin-top: 25px;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        transition-duration: 0.4s;
+        width: 100%;
+
+        &:hover {
+          background-color: #45a049;
+        }
       }
     }
   }
